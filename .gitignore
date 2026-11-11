@@ -1,0 +1,6 @@
+ComfyUI/
+*.safetensors
+*.gguf
+__pycache__/
+workflows/.template.json
+.claude/
