@@ -30,6 +30,29 @@ Each workflow goes further than a plain prompt to a frontier image model:
 | `fun-poster-schema-drift` | 2:3 | Spoof horror movie poster |
 | `fun-poster-legacy-system` | 2:3 | Spoof western movie poster |
 | `fun-poster-latency` | 2:3 | Spoof romantic comedy poster |
+| `fun-poster-null-and-void` | 2:3 | Spoof film noir poster |
+| `fun-comic-data-quality` | 21:9 | Three-panel office comic: revenue up 400% |
+| `fun-trading-card` | 2:3 | Collectible "Data Engineer" trading card with stats |
+| `fun-magazine-cover` | 2:3 | Spoof "Data Weekly" magazine cover |
+| `mkt-event-vertical` | 9:16 | Event roll-up or booth banner |
+| `mkt-three-steps` | 16:9 | Numbered three-step infographic: Connect, Transform, Analyze |
+| `mkt-email-header` | 21:9 | Newsletter header |
+| `tech-arch-lakehouse` | 16:9 | Sources → Qlik Talend Cloud → Qlik Open Lakehouse (bronze, silver, gold Iceberg) → Spark, Trino, Snowflake, Qlik Cloud Analytics |
+| `tech-arch-rag-ai` | 16:9 | Retrieval-augmented AI: knowledge sources → chunking, embeddings, ACLs → vector store → LLM orchestrator, Qlik Answers, guardrails |
+| `tech-arch-hybrid-cloud` | 16:9 | On-premises mainframe and databases → Qlik Data Movement Gateway → Qlik Talend Cloud → cloud warehouse and Qlik analytics |
+| `tech-arch-iot-streaming` | 16:9 | Edge devices → IoT hub → stream processing → hot path (alerts, Qlik Automate) and cold path (lakehouse, dashboards) |
+| `mkt-quote-card` | 1:1 | Customer testimonial card with quotation, attribution and Read the Story button |
+| `mkt-stats` | 16:9 | Three big-number stat cards (illustrative figures) |
+| `mkt-before-after` | 16:9 | Before and after comparison: spreadsheet chaos vs a governed data platform |
+| `mkt-carousel-cover` | 1:1 | Social carousel cover: "5 Signs Your Data Stack Needs an Upgrade" |
+| `mkt-ebook-cover` | 2:3 | Ebook cover: "The AI-Ready Data Playbook" |
+| `fun-comic-migration` | 21:9 | Three-panel office comic: the cloud migration |
+| `fun-comic-quick-sync` | 21:9 | Three-panel office comic: the five-minute sync |
+| `fun-poster-scope-creep` | 2:3 | Spoof monster movie poster |
+| `fun-poster-merge-conflict` | 2:3 | Spoof action movie poster |
+| `fun-motivational-poster` | 2:3 | Spoof motivational office poster: REPORTING |
+| `img-photo-to-cartoon-lite` | photo | Any photo to a cartoon by image-to-image; fits a 4 GB GPU. Describe the subject in the prompt (hair or bald, skin, facial hair, glasses, clothing, extras like a bow tie): at the default denoise of 0.83 the model keeps only the features you name. Below about 0.8 the result stays close to the photo |
+| `img-photo-to-cartoon`, `img-photo-to-cartoon-bowtie` | photo | Photo to cartoon with the MOSS-Image edit LoRA (`moss_image_edit_lora_rank_64_bf16.safetensors` in `models/loras`); needs more than 4 GB of VRAM |
 
 The comics and posters are original: their own characters, jokes and titles, not based on any existing comic strip or film. Comics use a dark-text version of the official logo for their white page.
 

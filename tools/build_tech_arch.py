@@ -26,7 +26,8 @@ W, H = 1360, 768
 REFINE_SCALE, REFINE_STEPS, REFINE_DENOISE = 1.5, 10, 0.45
 LOGO_FILE = "qlik-logo-header.png"              # ComfyUI/input, sized for the refined canvas
 LOGO_FILE_DARK = "qlik-logo-header-dark.png"    # charcoal "lik" for light backgrounds
-LIGHT_BACKGROUND = {"fun-comic-product-mgmt", "fun-comic-standup", "fun-comic-spreadsheet", "fun-comic-ai-strategy"}
+LIGHT_BACKGROUND = {"fun-comic-product-mgmt", "fun-comic-standup", "fun-comic-spreadsheet", "fun-comic-ai-strategy",
+                    "fun-comic-data-quality", "fun-comic-migration", "fun-comic-quick-sync"}
 
 # Qlik brand palette (qlik-marketecture/scripts/brand_core.json), navy theme
 NAVY, NAVY_DEEP, GREEN, CYAN = "#19416C", "#0F2A47", "#009845", "#10CFC9"
@@ -563,6 +564,423 @@ def poster_latency():
             "coffee shop smile at their laptops as loading wheels drift between them. " + POSTER), b
 
 
+def poster_null_and_void():
+    b = poster("NULL\n& VOID", "Some values are better left missing.",
+               "A rain-soaked city alley at night in black-and-white film noir style, neon reflections in puddles, "
+               "faint glowing green question marks drifting through the fog",
+               (276, 420, 280, 480, "A hard-boiled detective in a trench coat and fedora standing under a streetlamp, "
+                                    "face half in shadow, holding a printed spreadsheet"),
+               "NOW STREAMING IN YOUR WAREHOUSE")
+    return ("Original film noir movie poster titled NULL AND VOID: a trench-coated detective in a rainy neon alley "
+            "full of glowing question marks. " + POSTER), b
+
+
+def comic_data_quality():
+    return comic_strip("Data Quality", [
+        ("a bright office with a big monitor showing a chart shooting straight up",
+         [(30, 330, 200, 310, f"{ANALYST} jumping with excitement, pointing at the chart"),
+          (260, 330, 200, 310, f"{ENGINEER} sipping coffee")],
+         [(20, 112, 260, 120, "Revenue is\nup 400%!", "down toward the analyst on the left")]),
+        ("the same office in front of the monitor, with only one person in the panel",
+         [(140, 330, 220, 310, f"{ENGINEER} alone, wincing apologetically")],
+         [(40, 112, 410, 120, "We loaded the table\nfour times.", "down toward the engineer")]),
+        ("a corner office with a large window, with exactly three people in the panel",
+         [(20, 330, 190, 310, f"{EXEC} on the left, giving an enthusiastic thumbs up"),
+          (225, 350, 120, 290, f"{ANALYST}, horrified"),
+          (350, 350, 120, 290, f"{ENGINEER}, horrified")],
+         [(20, 112, 250, 110, "Great. Let's keep\ndoing that.", "down toward the executive on the left")]),
+    ], "Panel one: an analyst celebrates revenue up 400 percent. Panel two: the engineer, alone, admits the table was "
+       "loaded four times; the executive does not appear until panel three. Panel three: the executive in the navy suit "
+       "says to keep doing that while the analyst and engineer look horrified.")
+
+
+def mkt_event_vertical():
+    b = [background()]
+    b += pill(56, 140, 260, 48, "JOIN US LIVE")
+    b += [headline(56, 214, 656, 250, "Where Data\nMeets Action")]
+    b += [hero_art(0, 500, 768, 560,
+                   "An abstract glossy 3D illustration of a glowing stage of stacked platform layers with emerald green "
+                   "and cyan data streams rising upward like light beams, on a dark navy background")]
+    b += [subline(56, 1092, 656, 70, "Live demos · Expert sessions · Hands-on labs")]
+    b += button(56, 1196, 320, 80, "Book a Demo")
+    prompt = ("Tall vertical event roll-up banner: a green 'Join Us Live' label and a large two-line headline at the top, "
+              "an abstract 3D stage illustration in the middle, a cyan subheading and a green 'Book a Demo' button at the "
+              "bottom. " + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_three_steps():
+    b = [background(), *header("From Data to Decisions in Three Steps", "A simple path from raw data to action")]
+    steps = [("Connect", "Bring every source together in real time",
+              "a cluster of glowing database cylinders and cloud shapes linked by light streams"),
+             ("Transform", "Clean, govern and shape trusted data",
+              "a glowing prism refracting messy particles into neat aligned cubes"),
+             ("Analyze", "Turn insights into action with AI",
+              "a glowing rising bar chart with a sparkling spark of light above it")]
+    for i, (title, body_text, art) in enumerate(steps):
+        x = 40 + i * 440
+        b += [box(x, 150, 400, 540, "obj", "",
+                  "A tall rounded card of darker navy glass with a thin glowing cyan hairline border", (NAVY_DEEP, CYAN))]
+        b += [box(x + 24, 174, 64, 64, "obj", "", "A solid bright emerald green circle badge", (GREEN,))]
+        b += [box(x + 36, 186, 40, 40, "text", str(i + 1),
+                  "A bold white number showing the given text, centered", (WHITE,))]
+        b += [hero_art(x + 100, 190, 220, 200, f"A small glossy 3D icon illustration of {art}")]
+        b += [box(x + 24, 420, 352, 60, "text", title,
+                  "A bold white step title set in the Inter typeface showing the given text, left aligned", (WHITE,))]
+        b += [box(x + 24, 490, 352, 110, "text", body_text,
+                  "Light cyan body text set in the Inter typeface showing the given text, left aligned", (CYAN,))]
+    for x in (440, 880):
+        b += [arrow(x, 400, 40, 40)]
+    b += [footer("Connect · Transform · Analyze")]
+    prompt = ("Three-step infographic: three tall cards side by side numbered one to three, Connect, Transform and "
+              "Analyze, each with a small 3D icon, a title and a short description, joined by glowing green arrows. "
+              + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_email_header():
+    b = [background()]
+    b += [headline(64, 180, 900, 170, "Your Monthly\nData Digest")]
+    b += [subline(64, 380, 900, 60, "News, tips and product updates for data teams")]
+    b += [box(64, 470, 120, 6, "obj", "", "A short thin emerald green accent bar", (GREEN,))]
+    b += [hero_art(980, 110, 560, 520,
+                   "An abstract glossy 3D illustration of floating envelopes and glowing chart cards orbiting a soft "
+                   "emerald green light core")]
+    prompt = ("Wide email newsletter header: a large two-line headline, a cyan subheading and a green accent bar on the "
+              "left, with an abstract 3D illustration of floating envelopes and chart cards on the right. " + MKT_STYLE)
+    return prompt, b
+
+
+FUN_PRINT = ("Original glossy print design, rich color, crisp detail, every word sharp and perfectly legible, "
+             "no logos.")
+
+
+def fun_trading_card():
+    b = [box(0, 0, W, H, "obj", "", "A dark navy background", (NAVY_DEEP,))]
+    b += [box(24, 104, 784, 1120, "obj", "",
+              "An ornate collectible trading card frame with shimmering holographic emerald green and cyan foil "
+              "edges, simple rounded corners with no emblems or shields, and a dark inner panel", (GREEN, CYAN, NAVY_DEEP))]
+    b += [box(60, 136, 560, 60, "text", "THE DATA ENGINEER",
+              "Bold white fantasy-style card title showing the given text, left aligned", (WHITE,))]
+    b += [person(120, 210, 592, 580, "A heroic data engineer character in a hoodie with glowing green goggles, "
+                                     "holding a wrench and a plain unmarked laptop with a blank lid, dramatic fantasy "
+                                     "trading-card illustration, no symbols or logos on clothing or objects")]
+    b += [box(60, 810, 712, 40, "text", "LEGENDARY · PIPELINE CLASS",
+              "Small bold emerald green uppercase card type line showing the given text, centered", (GREEN,))]
+    b += [box(100, 870, 632, 190, "text", "UPTIME  99\nDEBUGGING  97\nCOFFEE  100",
+              "Three lines of bold white card stats showing the given text, left aligned, evenly spaced", (WHITE,))]
+    b += [box(80, 1080, 672, 100, "text", "Fixes in production what\nothers won't admit is broken.",
+              "Italic light grey flavor text showing the given text, centered", (GRAY,))]
+    prompt = ("Original collectible fantasy trading card for THE DATA ENGINEER: ornate holographic frame, heroic "
+              "character art, a type line, three stats and italic flavor text. " + FUN_PRINT)
+    return prompt, b
+
+
+def fun_magazine_cover():
+    b = [box(0, 0, W, H, "obj", "", "A bright clean studio backdrop in soft emerald green", (GREEN, WHITE))]
+    b += [box(40, 40, 620, 150, "text", "DATA WEEKLY",
+              "A huge bold white magazine masthead showing the given text, left aligned, tightly kerned", (WHITE,))]
+    b += [person(140, 230, 560, 840, "A confident data scientist in a sharp blazer posing for a glossy magazine cover, "
+                                     "arms crossed, studio lighting")]
+    b += [box(40, 300, 280, 150, "text", "10 QUERIES\nTHAT WILL\nCHANGE YOUR LIFE",
+              "Bold black uppercase magazine cover line showing the given text, left aligned", (INK,))]
+    b += [box(530, 640, 270, 150, "text", "IS YOUR\nDASHBOARD\nLYING TO YOU?",
+              "Bold white uppercase magazine cover line on a dark band showing the given text, left aligned", (WHITE,))]
+    b += [box(40, 1080, 752, 90, "text", "EXCLUSIVE: WE ASKED AI\nTO WRITE THIS HEADLINE",
+              "Bold yellow uppercase magazine cover line showing the given text, left aligned", ("#FFD200",))]
+    b += [box(40, 1192, 420, 30, "text", "ISSUE 42 · NOVEMBER",
+              "Small white uppercase issue line showing the given text, left aligned", (WHITE,))]
+    prompt = ("Original spoof glossy magazine cover titled DATA WEEKLY: a confident data scientist on a green studio "
+              "backdrop surrounded by bold cover lines. " + FUN_PRINT)
+    return prompt, b
+
+
+# ---------------------------------------------------------------- more technical architectures
+def lakehouse():
+    b = [background(), *header("Open Lakehouse Architecture",
+                               "Streaming changes into Apache Iceberg tables that any engine can query")]
+    b += zone(28, 150, 250, 556, "Sources")
+    b += comp(44, 214, 218, 76, "Operational DBs", "database cylinder")
+    b += comp(44, 354, 218, 76, "SaaS Apps", "cloud")
+    b += comp(44, 494, 218, 76, "Files & Streams", "event stream")
+    for y in (236, 376, 516):
+        b += [arrow(278, y, 40, 32)]
+    b += comp(318, 214, 200, 356, "Qlik Talend\nCloud", "data flow")
+    b += [edge_label(308, 584, 220, "CDC · streaming")]
+    b += [arrow(518, 376, 40, 32)]
+    b += zone(558, 150, 520, 556, "Qlik Open Lakehouse")
+    b += comp(576, 214, 484, 76, "Bronze · Raw Iceberg", "layers")
+    b += [arrow(802, 292, 32, 60, "down")]
+    b += comp(576, 354, 484, 76, "Silver · Cleaned Tables", "table grid")
+    b += [arrow(802, 432, 32, 60, "down")]
+    b += comp(576, 494, 484, 76, "Gold · Data Products", "star")
+    b += [edge_label(568, 600, 500, "adaptive optimizer · open catalog")]
+    b += [arrow(1078, 376, 34, 32)]
+    b += zone(1112, 150, 224, 556, "Query Engines")
+    for i, (name, icon) in enumerate((("Spark", "lightning bolt"), ("Trino", "magnifying glass"),
+                                      ("Snowflake", "snowflake"), ("Qlik Cloud\nAnalytics", "bar chart"))):
+        b += comp(1124, 214 + i * 116, 200, 76, name, icon)
+    b += [footer("Open table formats · one copy of the data · any engine")]
+    prompt = ("Technical open lakehouse architecture: operational databases, SaaS apps and files on the left stream "
+              "through Qlik Talend Cloud into Qlik Open Lakehouse with bronze, silver and gold Apache Iceberg layers, "
+              "queried by Spark, Trino, Snowflake and Qlik Cloud Analytics on the right. " + STYLE)
+    return prompt, b
+
+
+def rag_ai():
+    b = [background(), *header("Retrieval-Augmented AI Architecture",
+                               "Grounding AI answers in governed enterprise data")]
+    b += zone(28, 150, 250, 556, "Knowledge Sources")
+    b += comp(44, 214, 218, 76, "Documents", "document")
+    b += comp(44, 354, 218, 76, "Wikis & Tickets", "chat bubble")
+    b += comp(44, 494, 218, 76, "Data Products", "database cylinder")
+    b += [arrow(278, 376, 40, 32)]
+    b += zone(318, 150, 300, 556, "Ingestion")
+    b += comp(334, 214, 268, 76, "Chunking", "scissors")
+    b += [arrow(452, 292, 32, 60, "down")]
+    b += comp(334, 354, 268, 76, "Embeddings", "network nodes")
+    b += [arrow(452, 432, 32, 60, "down")]
+    b += comp(334, 494, 268, 76, "Metadata & ACLs", "lock")
+    b += [arrow(618, 376, 40, 32)]
+    b += comp(658, 316, 220, 130, "Vector Store", "database cylinder")
+    b += [edge_label(648, 456, 240, "semantic search")]
+    b += [arrow(878, 376, 40, 32)]
+    b += zone(918, 150, 418, 556, "AI Experience")
+    b += comp(936, 214, 382, 76, "LLM Orchestrator", "brain")
+    b += comp(936, 354, 382, 76, "Qlik Answers", "chat bubble")
+    b += comp(936, 494, 382, 76, "Guardrails & Audit", "shield check")
+    b += [footer("Every answer cites its source · user permissions respected end to end")]
+    prompt = ("Technical retrieval-augmented generation architecture: documents, wikis and data products on the left "
+              "are chunked, embedded and tagged with access controls, stored in a vector store, and used by an LLM "
+              "orchestrator, Qlik Answers and a guardrails layer on the right. " + STYLE)
+    return prompt, b
+
+
+def hybrid_cloud():
+    b = [background(), *header("Hybrid Cloud Data Movement",
+                               "Securely replicating on-premises systems to the cloud")]
+    b += zone(28, 150, 400, 556, "On-Premises Data Center")
+    b += comp(44, 214, 368, 76, "Mainframe", "server rack")
+    b += comp(44, 330, 368, 76, "ERP Database", "database cylinder")
+    b += comp(44, 446, 368, 76, "Oracle Database", "database cylinder")
+    b += [arrow(212, 524, 32, 48, "down")]
+    b += comp(44, 574, 368, 100, "Qlik Data Movement\nGateway", "gateway")
+    b += [arrow(428, 606, 60, 32)]
+    b += [edge_label(418, 646, 80, "TLS")]
+    b += zone(488, 150, 848, 556, "Cloud")
+    b += comp(508, 214, 380, 76, "Cloud Data Warehouse", "warehouse")
+    b += comp(508, 330, 380, 76, "Object Storage", "storage bucket")
+    b += [arrow(682, 412, 32, 156, "up")]
+    b += comp(508, 574, 380, 100, "Qlik Talend Cloud", "data flow")
+    b += [arrow(888, 236, 32, 32), arrow(888, 352, 32, 32)]
+    b += comp(920, 214, 396, 76, "Qlik Cloud Analytics", "bar chart")
+    b += comp(920, 330, 396, 76, "Qlik Answers", "chat bubble")
+    b += comp(920, 446, 396, 76, "Qlik Automate", "lightning bolt")
+    b += [footer("Outbound-only connection · no inbound firewall ports · encrypted in transit")]
+    prompt = ("Technical hybrid cloud architecture: a mainframe, an ERP database and an Oracle database in an "
+              "on-premises data center replicate through a Qlik Data Movement Gateway over an encrypted link to Qlik "
+              "Talend Cloud, which loads a cloud data warehouse and object storage that feed Qlik Cloud Analytics, "
+              "Qlik Answers and Qlik Automate. " + STYLE)
+    return prompt, b
+
+
+def iot_streaming():
+    b = [background(), *header("Real-Time IoT Analytics", "From sensor events to live dashboards and alerts")]
+    b += zone(28, 150, 240, 556, "Edge Devices")
+    b += comp(44, 214, 208, 76, "Sensors", "thermometer")
+    b += comp(44, 354, 208, 76, "Machines", "gear")
+    b += comp(44, 494, 208, 76, "Vehicles", "truck")
+    b += [arrow(268, 376, 40, 32)]
+    b += comp(308, 316, 190, 130, "IoT Hub", "antenna")
+    b += [edge_label(298, 456, 210, "MQTT · millions/sec")]
+    b += [arrow(498, 376, 40, 32)]
+    b += comp(538, 214, 200, 356, "Stream\nProcessing", "lightning bolt")
+    b += [arrow(738, 264, 50, 32), arrow(738, 560, 50, 32)]
+    b += zone(788, 150, 548, 260, "Hot Path · Seconds")
+    b += comp(806, 214, 250, 76, "Anomaly Alerts", "bell")
+    b += comp(1068, 214, 250, 76, "Qlik Automate", "lightning bolt")
+    b += [edge_label(806, 306, 512, "real-time triggers and notifications")]
+    b += zone(788, 446, 548, 260, "Cold Path · History")
+    b += comp(806, 510, 250, 76, "Lakehouse Storage", "database cylinder")
+    b += comp(1068, 510, 250, 76, "Qlik Sense\nDashboards", "bar chart")
+    b += [edge_label(806, 602, 512, "trends · forecasting · machine learning")]
+    b += [footer("Hot path for alerts in seconds · cold path for history and prediction")]
+    prompt = ("Technical real-time IoT architecture: sensors, machines and vehicles on the left send events to an IoT "
+              "hub and a stream processing engine, which splits into a hot path of anomaly alerts and Qlik Automate "
+              "and a cold path of lakehouse storage and Qlik Sense dashboards on the right. " + STYLE)
+    return prompt, b
+
+
+# ---------------------------------------------------------------- more marketing assets
+def mkt_quote_card():
+    b = [background()]
+    b += [box(64, 90, 150, 120, "obj", "", "A large stylized emerald green opening quotation mark shape", (GREEN,))]
+    b += [box(64, 230, 896, 330, "text", "We went from waiting days\nfor reports to answering\nquestions in minutes.",
+              "A large bold white quotation set in the Inter typeface showing the given text with no quotation marks, left aligned", (WHITE,))]
+    b += [box(64, 596, 120, 6, "obj", "", "A short thin emerald green accent bar", (GREEN,))]
+    b += [box(64, 624, 640, 44, "text", "Head of Data, Global Retailer",
+              "Light cyan attribution text set in the Inter typeface showing the given text, left aligned", (CYAN,))]
+    b += button(64, 900, 300, 72, "Read the Story")
+    b += [hero_art(560, 680, 464, 344,
+                   "An abstract glossy 3D illustration of glowing emerald green and cyan data ribbons curving upward")]
+    prompt = ("Square customer testimonial card: a large green quotation mark, a three-line quotation, a green accent "
+              "bar, an attribution line and a green 'Read the Story' button, with abstract 3D data ribbons in the "
+              "corner. " + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_stats():
+    b = [background(), *header("The Impact of Trusted Data", "What data teams report after modernizing")]
+    stats = [("3x", "faster time\nto insight", "a glowing upward rocket trail"),
+             ("60%", "less time spent\npreparing data", "a glowing hourglass with light flowing through it"),
+             ("24/7", "real-time data\ndelivery", "a glowing circular clock ring of light")]
+    for i, (num, label, art) in enumerate(stats):
+        x = 40 + i * 440
+        b += [box(x, 150, 400, 540, "obj", "",
+                  "A tall rounded card of darker navy glass with a thin glowing cyan hairline border", (NAVY_DEEP, CYAN))]
+        b += [box(x + 24, 190, 352, 170, "text", num,
+                  "A huge bold emerald green number set in the Inter typeface showing the given text, left aligned", (GREEN,))]
+        b += [box(x + 24, 380, 352, 110, "text", label,
+                  "Bold white text set in the Inter typeface showing the given text, left aligned", (WHITE,))]
+        b += [hero_art(x + 24, 510, 352, 160, f"A small glossy 3D illustration of {art}")]
+    b += [footer("Illustrative figures · replace with your own results")]
+    prompt = ("Statistics callout graphic: three tall glass cards side by side, each with a huge green number, a "
+              "short white label and a small 3D illustration. " + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_before_after():
+    b = [background(), *header("Before and After a Modern Data Platform",
+                               "From spreadsheet chaos to governed, real-time insight")]
+    b += [box(40, 150, 620, 540, "obj", "", "A rounded card of dull dark charcoal grey glass, muted and lifeless",
+              (CHARCOAL, NAVY_DEEP))]
+    b += [box(64, 170, 300, 44, "text", "BEFORE",
+              "Bold uppercase grey letter-spaced label set in the Inter typeface showing the given text, left aligned", (GRAY,))]
+    b += [box(64, 230, 572, 280, "obj", "",
+              "A messy tangle of overlapping paper spreadsheets, sticky notes and broken grey cables in dull grey tones, "
+              "completely free of any text, letters, numbers, symbols or logos", (GRAY, CHARCOAL))]
+    b += [box(64, 540, 572, 120, "text", "Manual exports · Stale reports\nConflicting numbers",
+              "Grey body text set in the Inter typeface showing the given text, left aligned", (GRAY,))]
+    b += [arrow(660, 400, 40, 40)]
+    b += [box(700, 150, 620, 540, "obj", "",
+              "A rounded card of deep navy glass with a glowing emerald green hairline border", (NAVY_DEEP, GREEN))]
+    b += [box(724, 170, 300, 44, "text", "AFTER",
+              "Bold uppercase emerald green letter-spaced label set in the Inter typeface showing the given text, left aligned",
+              (GREEN,))]
+    b += [hero_art(724, 230, 572, 280,
+                   "A neat glowing 3D platform of aligned data blocks connected by clean emerald green and cyan light streams")]
+    b += [box(724, 540, 572, 120, "text", "Automated pipelines · Live dashboards\nOne trusted version of the truth",
+              "White body text set in the Inter typeface showing the given text, left aligned", (WHITE,))]
+    prompt = ("Before and after comparison graphic: a dull grey card on the left showing tangled spreadsheets and "
+              "cables, a green arrow, and a glowing navy card on the right showing a neat connected data platform, each "
+              "with a label and two lines of text. " + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_carousel_cover():
+    b = [background()]
+    b += pill(64, 110, 220, 46, "DATA TIPS")
+    b += [headline(64, 184, 880, 300, "5 Signs Your\nData Stack Needs\nan Upgrade")]
+    b += [hero_art(424, 500, 600, 340,
+                   "An abstract glossy 3D illustration of a stack of glowing platform blocks with one cracked block "
+                   "leaking sparks of emerald green light")]
+    b += [subline(64, 868, 520, 60, "Swipe to see them all")]
+    b += [arrow(600, 876, 90, 44)]
+    prompt = ("Square social carousel cover: a green 'Data Tips' label, a large three-line headline, a 3D illustration "
+              "of a stack of platform blocks with one cracked block, and a cyan 'Swipe to see them all' line with a green "
+              "arrow. " + MKT_STYLE)
+    return prompt, b
+
+
+def mkt_ebook_cover():
+    b = [background()]
+    b += pill(56, 140, 200, 46, "EBOOK")
+    b += [headline(56, 214, 720, 320, "The AI-Ready\nData Playbook")]
+    b += [subline(56, 556, 720, 100, "A practical guide to building\ntrusted data for AI")]
+    b += [hero_art(0, 690, 832, 420,
+                   "An abstract glossy 3D illustration of an open book whose pages rise into glowing layers of emerald "
+                   "green and cyan data")]
+    b += [box(56, 1150, 720, 40, "text", "2026 EDITION",
+              "Small light grey uppercase letter-spaced text set in the Inter typeface showing the given text, left aligned",
+              (GRAY,))]
+    prompt = ("Portrait ebook cover: a green 'Ebook' label, a large two-line title, a cyan subtitle, a 3D illustration of "
+              "an open book rising into glowing data layers, and a small edition line. " + MKT_STYLE)
+    return prompt, b
+
+
+# ---------------------------------------------------------------- more fun
+def comic_migration():
+    return comic_strip("The Cloud Migration", [
+        ("a boardroom with a presentation screen showing a simple cloud shape",
+         [(140, 330, 220, 310, f"{EXEC} standing with arms spread wide")],
+         [(40, 112, 410, 120, "We're moving everything\nto the cloud!", "down toward the executive")]),
+        ("the same boardroom, with only one person in the panel",
+         [(140, 330, 220, 310, f"{ENGINEER} alone, raising one eyebrow")],
+         [(40, 112, 410, 120, "Including the\nmainframe from 1987?", "down toward the engineer")]),
+        ("a dusty server room with a huge beige mainframe computer on the right side, with exactly two people in the panel",
+         [(30, 330, 200, 310, f"{ENGINEER} on the left with a flat, tired expression"),
+          (260, 330, 200, 310, f"{EXEC} on the right hugging the beige mainframe protectively")],
+         [(250, 112, 220, 110, "Not Gerald.\nGerald stays.", "a single tail pointing down toward the executive on the right")]),
+    ], "Panel one: the executive announces everything is moving to the cloud. Panel two: the engineer, alone, asks "
+       "about the mainframe from 1987. Panel three: the tired engineer stands on the left while the executive on the right hugs the old beige "
+       "mainframe and says Gerald stays.")
+
+
+def comic_meeting():
+    return comic_strip("Quick Sync", [
+        ("a small meeting room with a wall clock showing ten o'clock",
+         [(30, 330, 200, 310, f"{PM} smiling and holding a laptop"),
+          (260, 330, 200, 310, f"{ENGINEER} sitting down")],
+         [(20, 112, 260, 110, "Quick sync.\nFive minutes.", "down toward the product manager on the left")]),
+        ("the same meeting room, the wall clock now showing eleven o'clock, with only one person in the panel",
+         [(140, 330, 220, 310, f"{ENGINEER} alone, slumped in a chair, exhausted, speaking")],
+         [(40, 112, 410, 110, "It's been\nan hour.", "down toward the engineer")]),
+        ("the same meeting room",
+         [(30, 330, 200, 310, f"{PM} beaming"),
+          (260, 330, 200, 310, f"{ENGINEER} with head down on the table")],
+         [(20, 112, 260, 110, "Great! Let's book\na follow-up.", "down toward the product manager on the left")]),
+    ], "Panel one: the product manager promises a five-minute sync. Panel two: an hour later the slumped engineer, alone in the "
+       "panel, says it has been an hour. Panel three: the beaming product manager suggests a follow-up while the engineer puts "
+       "their head on the table.")
+
+
+def poster_scope_creep():
+    b = poster("SCOPE\nCREEP", "It started as one small feature.",
+               "A giant towering monster made of thousands of yellow sticky notes and paper feature requests stomping "
+               "through a city skyline at dusk, debris flying, epic monster movie atmosphere",
+               (236, 520, 360, 370, "A small terrified team of three office workers in the street looking up at the "
+                                    "monster"),
+               "NOW IN EXTENDED EDITION")
+    return ("Original monster movie poster titled SCOPE CREEP: a giant monster made of sticky notes stomps through a "
+            "city while a small team looks up in terror. " + POSTER), b
+
+
+def poster_merge_conflict():
+    b = poster("MERGE\nCONFLICT", "Only one branch survives.",
+               "A dramatic rooftop at night in pouring rain, two glowing branching lines of light, one green and one "
+               "orange, colliding in the sky in a burst of sparks, explosive action movie atmosphere",
+               (156, 430, 520, 450, "Two rival developers facing each other in a tense standoff on the rooftop, each "
+                                    "holding a glowing laptop like a weapon, the laptop screens plain glowing light "
+                                    "with no logos, letters or symbols"),
+               "IN THEATERS AFTER CODE FREEZE")
+    return ("Original action movie poster titled MERGE CONFLICT: two rival developers face off on a rainy rooftop as "
+            "two branches of light collide above them. " + POSTER), b
+
+
+def fun_motivational():
+    b = [box(0, 0, W, H, "obj", "", "A solid black background", ("#000000",))]
+    b += [box(90, 134, 652, 652, "obj", "", "A thin white rectangular border framing a photograph", (WHITE,))]
+    b += [person(96, 140, 640, 640, "A photograph of a lone office worker at a desk buried under towering stacks of "
+                                    "printed reports, warm dramatic window light, completely free of text")]
+    b += [box(56, 830, 720, 120, "text", "REPORTING",
+              "A huge white letter-spaced serif uppercase title showing the given text, centered", (WHITE,))]
+    b += [box(76, 980, 680, 130, "text", "Because nobody reads it,\nbut everyone wants it on Monday.",
+              "White serif caption text showing the given text, centered", (WHITE,))]
+    prompt = ("Original spoof motivational office poster: a solid black background, a framed photograph of an office "
+              "worker buried in printed reports, a large serif title and a deadpan two-line caption. " + FUN_PRINT)
+    return prompt, b
+
+
 # name -> (layout, ResolutionSelector aspect, canvas width, canvas height, seed)
 # The canvas must equal what ResolutionSelector computes at 1 MP, multiple 16, because its outputs drive the sizes.
 LAYOUTS = {
@@ -584,6 +1002,27 @@ LAYOUTS = {
     "fun-poster-schema-drift": (poster_schema_drift, "2:3 (Portrait Photo)", 832, 1248, 54),
     "fun-poster-legacy-system": (poster_legacy_system, "2:3 (Portrait Photo)", 832, 1248, 55),
     "fun-poster-latency":      (poster_latency, "2:3 (Portrait Photo)", 832, 1248, 56),
+    "fun-poster-null-and-void": (poster_null_and_void, "2:3 (Portrait Photo)", 832, 1248, 57),
+    "fun-comic-data-quality":  (comic_data_quality, "21:9 (Ultrawide)", 1568, 672, 46),
+    "fun-trading-card":        (fun_trading_card, "2:3 (Portrait Photo)", 832, 1248, 62),
+    "fun-magazine-cover":      (fun_magazine_cover, "2:3 (Portrait Photo)", 832, 1248, 62),
+    "mkt-event-vertical":      (mkt_event_vertical, "9:16 (Portrait Widescreen)", 768, 1360, 35),
+    "mkt-three-steps":         (mkt_three_steps, "16:9 (Widescreen)", 1360, 768, 36),
+    "mkt-email-header":        (mkt_email_header, "21:9 (Ultrawide)", 1568, 672, 37),
+    "tech-arch-lakehouse":     (lakehouse,     "16:9 (Widescreen)", 1360, 768, 21),
+    "tech-arch-rag-ai":        (rag_ai,        "16:9 (Widescreen)", 1360, 768, 25),
+    "tech-arch-hybrid-cloud":  (hybrid_cloud,  "16:9 (Widescreen)", 1360, 768, 23),
+    "tech-arch-iot-streaming": (iot_streaming, "16:9 (Widescreen)", 1360, 768, 24),
+    "mkt-quote-card":          (mkt_quote_card, "1:1 (Square)",     1024, 1024, 38),
+    "mkt-stats":               (mkt_stats,     "16:9 (Widescreen)", 1360, 768, 39),
+    "mkt-before-after":        (mkt_before_after, "16:9 (Widescreen)", 1360, 768, 40),
+    "mkt-carousel-cover":      (mkt_carousel_cover, "1:1 (Square)", 1024, 1024, 41),
+    "mkt-ebook-cover":         (mkt_ebook_cover, "2:3 (Portrait Photo)", 832, 1248, 42),
+    "fun-comic-migration":     (comic_migration, "21:9 (Ultrawide)", 1568, 672, 47),
+    "fun-comic-quick-sync":    (comic_meeting, "21:9 (Ultrawide)",  1568, 672, 48),
+    "fun-poster-scope-creep":  (poster_scope_creep, "2:3 (Portrait Photo)", 832, 1248, 58),
+    "fun-poster-merge-conflict": (poster_merge_conflict, "2:3 (Portrait Photo)", 832, 1248, 59),
+    "fun-motivational-poster": (fun_motivational, "2:3 (Portrait Photo)", 832, 1248, 63),
 }
 
 
@@ -744,6 +1183,106 @@ def build(template, out_dirs):
         print(f"{name}: {len(boxes)} boxes")
 
 
+# ---------------------------------------------------------------- photo edits (MOSS-Image edit LoRA)
+EDIT_TEMPLATE_URL = ("https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/"
+                     "templates/image_moss_image_edit.json")
+EDIT_SAMPLE = "two_women_berets_floral_jackets.png"   # the template's own sample photo; swap it in Load Image
+EDIT_MEGAPIXELS = 0.5                                  # raise to 1.0 on GPUs with more than 4 GB
+CARTOON = ("Change only the art style of the whole image to a clean flat cartoon illustration with bold black ink "
+           "outlines, simple cel shading and bright flat colors. Keep every person, their faces, expressions, "
+           "hairstyles, glasses, clothing, poses, the framing and the background layout unchanged.")
+EDITS = {
+    "img-photo-to-cartoon": CARTOON,
+    "img-photo-to-cartoon-bowtie": CARTOON[:-1] + (", and add a bright lime-green bow tie with small white polka "
+                                                   "dots at the shirt collar."),
+}
+
+
+def build_edits(template, out_dirs):
+    for name, instruction in EDITS.items():
+        w = copy.deepcopy(template)
+        for n in w["nodes"]:
+            if n["type"] == "LoadImage":
+                n["widgets_values"][0] = EDIT_SAMPLE
+            elif n["type"] == "ImageScaleToTotalPixels":
+                # 1 MP plus the reference copy needs a 4 GB block in the sampler; 0.5 MP fits a 4 GB GPU
+                n["widgets_values"][1] = EDIT_MEGAPIXELS
+            elif n["type"] == "SaveImage":
+                n["widgets_values"] = [name]
+            elif n["type"] == "TextEncodeMOSSImageEdit" and n["widgets_values"][0].startswith("Change only"):
+                n["widgets_values"][0] = instruction
+        for d in out_dirs:
+            json.dump(w, open(os.path.join(d, name + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"{name}: edit")
+
+
+# ---------------------------------------------------------------- photo to cartoon, image-to-image (fits a 4 GB GPU)
+# At 0.83 the result is a true cartoon, but the model only keeps a likeness for the features the prompt names
+# (hair or baldness, skin, facial hair, glasses, clothing); below about 0.8 it stays a retouched photo.
+I2I_SUBJECT = ("two young women with brown bob haircuts and bangs in front of a grey block wall: on the left one with "
+               "closed eyes, round gold glasses, a dark green beret and a pink floral jacket over a white blouse; on the "
+               "right one in a navy beret and a navy cardigan embroidered with red flowers over a white blouse")       # describes the sample photo; replace it with a description of yours
+I2I_CARTOON = (f"A clean flat cartoon illustration of {I2I_SUBJECT}, keeping their faces, expressions and pose, "
+               "bold black ink outlines, simple cel shading, bright flat colors, friendly and polished")
+I2I_NEGATIVE = "photo, photorealistic, worst quality, blurry, deformed face, extra people, text, watermark, logo"
+I2I_DENOISE = 0.83      # lower keeps more of the photo, higher is more cartoon
+I2I_NOTE = ("## Photo to cartoon\n\n1. Load your photo in **Load Image**.\n2. In the top **CLIP Text Encode**, replace "
+            "the description after *cartoon illustration of* with your subject: hair (or bald), skin tone, facial hair, "
+            "glasses, clothing. Add extras the same way, e.g. *with a lime-green polka-dot bow tie*.\n3. Run.\n\n"
+            "Denoise 0.83 gives a true cartoon. The model keeps only the features you describe, so describe them. "
+            "Below about 0.8 the result stays close to the photo.")
+
+
+def build_i2i(out_dirs, name="img-photo-to-cartoon-lite"):
+    nodes, links = [], []
+
+    def node(nid, typ, pos, widgets, inputs=(), outputs=()):
+        nodes.append({"id": nid, "type": typ, "pos": pos, "size": [320, 120], "flags": {}, "order": nid, "mode": 0,
+                      "inputs": [{"name": a, "type": t, "link": None} for a, t in inputs],
+                      "outputs": [{"name": a, "type": t, "links": []} for a, t in outputs],
+                      "properties": {"Node name for S&R": typ}, "widgets_values": widgets})
+
+    def link(src, slot, dst, dslot, typ):
+        lid = len(links) + 1
+        links.append([lid, src, slot, dst, dslot, typ])
+        by = {n["id"]: n for n in nodes}
+        by[src]["outputs"][slot]["links"].append(lid)
+        by[dst]["inputs"][dslot]["link"] = lid
+
+    node(1, "UNETLoader", [0, 0], ["moss_image_sft_int8_convrot.safetensors", "default"], outputs=[("MODEL", "MODEL")])
+    node(2, "CLIPLoader", [0, 160], ["qwen3.5_9b_w4a8_gptq.safetensors", "moss_image", "default"], outputs=[("CLIP", "CLIP")])
+    node(3, "VAELoader", [0, 320], ["flux2-vae_small.safetensors"], outputs=[("VAE", "VAE")])
+    node(4, "CLIPTextEncode", [380, 0], [I2I_CARTOON], [("clip", "CLIP")], [("CONDITIONING", "CONDITIONING")])
+    node(5, "CLIPTextEncode", [380, 200], [I2I_NEGATIVE], [("clip", "CLIP")], [("CONDITIONING", "CONDITIONING")])
+    node(6, "LoadImage", [0, 480], [EDIT_SAMPLE, "image"], outputs=[("IMAGE", "IMAGE"), ("MASK", "MASK")])
+    node(7, "ImageScaleToTotalPixels", [380, 480], ["lanczos", 1.0, 16], [("image", "IMAGE")], [("IMAGE", "IMAGE")])
+    node(8, "VAEEncode", [760, 480], [], [("pixels", "IMAGE"), ("vae", "VAE")], [("LATENT", "LATENT")])
+    node(9, "KSampler", [800, 0], [7, "fixed", 25, 3.0, "euler", "simple", I2I_DENOISE],
+         [("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent_image", "LATENT")],
+         [("LATENT", "LATENT")])
+    node(10, "VAEDecode", [1180, 0], [], [("samples", "LATENT"), ("vae", "VAE")], [("IMAGE", "IMAGE")])
+    node(11, "SaveImage", [1180, 160], [name], [("images", "IMAGE")])
+    node(12, "MarkdownNote", [0, -260], [I2I_NOTE])
+    nodes[-1]["size"] = [700, 220]
+    link(1, 0, 9, 0, "MODEL")
+    link(2, 0, 4, 0, "CLIP")
+    link(2, 0, 5, 0, "CLIP")
+    link(4, 0, 9, 1, "CONDITIONING")
+    link(5, 0, 9, 2, "CONDITIONING")
+    link(6, 0, 7, 0, "IMAGE")
+    link(7, 0, 8, 0, "IMAGE")
+    link(3, 0, 8, 1, "VAE")
+    link(8, 0, 9, 3, "LATENT")
+    link(9, 0, 10, 0, "LATENT")
+    link(3, 0, 10, 1, "VAE")
+    link(10, 0, 11, 0, "IMAGE")
+    w = {"last_node_id": len(nodes), "last_link_id": len(links), "nodes": nodes, "links": links,
+         "groups": [], "config": {}, "extra": {}, "version": 0.4}
+    for d in out_dirs:
+        json.dump(w, open(os.path.join(d, name + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{name}: image-to-image")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--template", help="Local copy of image_moss_image_t2i_bboxes.json (downloaded if omitted)")
@@ -754,4 +1293,7 @@ if __name__ == "__main__":
         tpl = json.load(open(args.template, encoding="utf-8"))
     else:
         tpl = json.load(urllib.request.urlopen(TEMPLATE_URL, timeout=60))
-    build(tpl, args.out or [os.path.join(HERE, "..", "custom_node", "example_workflows")])
+    outs = args.out or [os.path.join(HERE, "..", "custom_node", "example_workflows")]
+    build(tpl, outs)
+    build_edits(json.load(urllib.request.urlopen(EDIT_TEMPLATE_URL, timeout=60)), outs)
+    build_i2i(outs)
