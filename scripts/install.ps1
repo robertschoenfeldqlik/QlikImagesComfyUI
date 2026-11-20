@@ -25,10 +25,21 @@ if ($LASTEXITCODE) { throw 'ComfyUI requirements install failed' }
 if ($LASTEXITCODE) { throw 'PyTorch cannot see the GPU' }
 
 # Downloads resume after interruptions; rerun until every file reports "verified".
+# download_models.py exits 0 when all files verify, 3 on a checksum mismatch, 4 after downloading (the next
+# run verifies offline), anything else on a download error or a process killed mid-download.
+# Security agents can kill the download every few tens of MB, so keep rerunning while bytes arrive and give up
+# only after 5 runs in a row that add nothing.
+$models = Join-Path $ComfyRoot 'models'
+$stalled = 0
 do {
-    & $venvPy (Join-Path $repo 'scripts\download_models.py') (Join-Path $ComfyRoot 'models')
-} while ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 1)
-if ($LASTEXITCODE) { throw 'Model checksum mismatch' }
+    $before = (Get-ChildItem $models -Recurse -File | Measure-Object Length -Sum).Sum
+    & $venvPy (Join-Path $repo 'scripts\download_models.py') $models
+    $code = $LASTEXITCODE
+    $after = (Get-ChildItem $models -Recurse -File | Measure-Object Length -Sum).Sum
+    if ($after -gt $before -or $code -eq 4) { $stalled = 0 } else { $stalled++ }
+} while ($code -ne 0 -and $code -ne 3 -and $stalled -lt 5)
+if ($code -eq 3) { throw 'Model checksum mismatch - delete the file reported above and rerun' }
+if ($code) { throw "Model download made no progress in $stalled runs - see the error above, then rerun" }
 
 # Install the workflows as a custom node so they open from a URL (?template=...&source=qlik-tech-arch)
 $node = Join-Path $ComfyRoot 'custom_nodes\qlik-tech-arch'

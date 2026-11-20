@@ -18,8 +18,9 @@ import json
 import os
 import urllib.request
 
-TEMPLATE_URL = ("https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/"
-                "templates/image_moss_image_t2i_bboxes.json")
+# Pinned to the upstream commits the committed workflows were built from; bump deliberately and diff the output.
+TEMPLATE_URL = ("https://raw.githubusercontent.com/Comfy-Org/workflow_templates/"
+                "1ae390968e323dba24a6991d1860ded051f5a79b/templates/image_moss_image_t2i_bboxes.json")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 W, H = 1360, 768
@@ -1153,6 +1154,9 @@ def build(template, out_dirs):
                                or bx["y"] + bx["height"] <= logo_box[1] or bx["y"] >= logo_box[3])
                 assert not overlap, (name, "text under logo", bx["metadata"]["text"])
         w = copy.deepcopy(template)
+        types = [n["type"] for n in w["nodes"]]
+        for need in ("CreateBoundingBoxes", "ResolutionSelector", "MOSSImageLayoutPrompt", "SaveImage"):
+            assert types.count(need) == 1, f"template changed: expected one {need} node, found {types.count(need)}"
         for n in w["nodes"]:
             if n["type"] == "CreateBoundingBoxes":
                 n["widgets_values"] = [W, H, copy.deepcopy(boxes), copy.deepcopy(boxes)]
@@ -1166,8 +1170,12 @@ def build(template, out_dirs):
             elif n["type"] == "MarkdownNote" and "Prompt upsampler is" in json.dumps(n["widgets_values"]):
                 n["widgets_values"] = [n["widgets_values"][0].replace(
                     "Prompt upsampler is **on** in this template", "Prompt upsampler is **off** in this workflow")]
-        sub = next(n for n in w["nodes"] if n["id"] == 18)
-        sub["widgets_values"][1] = False                     # prompt enhancer off: it rewrites the layout JSON
+        subs = [n for n in w["nodes"] if n["type"] == w["definitions"]["subgraphs"][0]["id"]]
+        assert len(subs) == 1 and len(w["definitions"]["subgraphs"]) == 1, "template changed: expected one MOSS subgraph"
+        sub = subs[0]
+        assert isinstance(sub["widgets_values"][1], bool) and isinstance(sub["widgets_values"][5], int), \
+            ("template changed: subgraph widgets are no longer [.., enhancer, negative, w, h, seed, ..]", sub["widgets_values"])
+        sub["widgets_values"][1] = False                    # prompt enhancer off: it rewrites the layout JSON
         sub["widgets_values"][2] = NEGATIVE
         sub["widgets_values"][3], sub["widgets_values"][4] = W, H
         sub["widgets_values"][5] = seed
@@ -1184,8 +1192,8 @@ def build(template, out_dirs):
 
 
 # ---------------------------------------------------------------- photo edits (MOSS-Image edit LoRA)
-EDIT_TEMPLATE_URL = ("https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/"
-                     "templates/image_moss_image_edit.json")
+EDIT_TEMPLATE_URL = ("https://raw.githubusercontent.com/Comfy-Org/workflow_templates/"
+                     "ea7faae6999fb31338f43408ff4a575bd3f7d9a0/templates/image_moss_image_edit.json")
 EDIT_SAMPLE = "two_women_berets_floral_jackets.png"   # the template's own sample photo; swap it in Load Image
 EDIT_MEGAPIXELS = 0.5                                  # raise to 1.0 on GPUs with more than 4 GB
 CARTOON = ("Change only the art style of the whole image to a clean flat cartoon illustration with bold black ink "
@@ -1201,6 +1209,7 @@ EDITS = {
 def build_edits(template, out_dirs):
     for name, instruction in EDITS.items():
         w = copy.deepcopy(template)
+        set_prompt = 0
         for n in w["nodes"]:
             if n["type"] == "LoadImage":
                 n["widgets_values"][0] = EDIT_SAMPLE
@@ -1211,6 +1220,8 @@ def build_edits(template, out_dirs):
                 n["widgets_values"] = [name]
             elif n["type"] == "TextEncodeMOSSImageEdit" and n["widgets_values"][0].startswith("Change only"):
                 n["widgets_values"][0] = instruction
+                set_prompt += 1
+        assert set_prompt == 1, f"edit template changed: found {set_prompt} edit prompts starting 'Change only'"
         for d in out_dirs:
             json.dump(w, open(os.path.join(d, name + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         print(f"{name}: edit")
@@ -1286,6 +1297,7 @@ def build_i2i(out_dirs, name="img-photo-to-cartoon-lite"):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--template", help="Local copy of image_moss_image_t2i_bboxes.json (downloaded if omitted)")
+    ap.add_argument("--edit-template", help="Local copy of image_moss_image_edit.json (downloaded if omitted)")
     ap.add_argument("--out", action="append",
                     help="Output folder (repeatable). Default: ../custom_node/example_workflows")
     args = ap.parse_args()
@@ -1295,5 +1307,9 @@ if __name__ == "__main__":
         tpl = json.load(urllib.request.urlopen(TEMPLATE_URL, timeout=60))
     outs = args.out or [os.path.join(HERE, "..", "custom_node", "example_workflows")]
     build(tpl, outs)
-    build_edits(json.load(urllib.request.urlopen(EDIT_TEMPLATE_URL, timeout=60)), outs)
+    if args.edit_template:
+        edit_tpl = json.load(open(args.edit_template, encoding="utf-8"))
+    else:
+        edit_tpl = json.load(urllib.request.urlopen(EDIT_TEMPLATE_URL, timeout=60))
+    build_edits(edit_tpl, outs)
     build_i2i(outs)
